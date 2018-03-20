@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Configurator</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="textview">TextView</string>
+    <string name="cncl">Нажата кнопка Cancel</string>
+    <string name="okk">Нажата кнопка OK</string>
+    <string name="image">TODO</string>
+    <string name="Нажата_Cancel">Нажата Cancel</string>
+    <string name="Нажата_OK">Нажата OK</string>
+    <string name="checkbox">Расширенное меню</string>
+    <string name="menu">Меню</string>
+
 </resources>
