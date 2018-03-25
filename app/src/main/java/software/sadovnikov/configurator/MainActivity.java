@@ -1,87 +1,97 @@
 package software.sadovnikov.configurator;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextView tvOut;
-    Button btnOk;
-    Button btnCancel;
-    TextView menu;
-    CheckBox checkBox;
-    public static final String TAG = "myLogs";
+    // View
+    TextView tvText;
+    Button btnColor;
+    Button btnAlign;
+
+    Button btnWeb;
+    Button btnMap;
+    Button btnCall;
+
+    final int REQUEST_CODE_COLOR = 1;
+    final int REQUEST_CODE_ALIGNMENT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "Поиск элементов");
-        tvOut = findViewById(R.id.tvOut);
-        btnOk = findViewById(R.id.btnOk);
-        menu = findViewById(R.id.textView);
-        checkBox = findViewById(R.id.checkBox);
-        btnCancel = findViewById(R.id.btnCancel);
-        btnOk.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    int i = 6 / 0;
-                    tvOut.setText("Результат = " + i);
-                } catch (Exception e) {
-                    Log.d(TAG, "на 0 не делим");
-                }
 
+        tvText = (TextView) findViewById(R.id.tvText);
+
+        btnColor = (Button) findViewById(R.id.btnColor);
+        btnAlign = (Button) findViewById(R.id.btnAlign);
+
+        btnColor.setOnClickListener(this);
+        btnAlign.setOnClickListener(this);
+
+        btnWeb = (Button) findViewById(R.id.btnWeb);
+        btnMap = (Button) findViewById(R.id.btnMap);
+        btnCall = (Button) findViewById(R.id.btnCall);
+
+        btnWeb.setOnClickListener(this);
+        btnMap.setOnClickListener(this);
+        btnCall.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()){
+            case R.id.btnColor:
+                intent = new Intent(this, ColorActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_COLOR);
+                break;
+            case R.id.btnAlign:
+                intent = new Intent(this, AlignActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_ALIGNMENT);
+                break;
+            case R.id.btnWeb:
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://space-team.com"));
+                startActivity(intent);
+                break;
+            case R.id.btnMap:
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("geo:55.754283,37.62002"));
+                startActivity(intent);
+                break;
+            case R.id.btnCall:
+                intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:+79651034808"));
+                startActivity(intent);
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("myLogs", "requestCode = " + requestCode + ", resultCode = " + resultCode);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_COLOR:
+                    tvText.setTextColor(data.getIntExtra("color", Color.WHITE));
+                    break;
+                case REQUEST_CODE_ALIGNMENT:
+                    tvText.setGravity(data.getIntExtra("alignment", Gravity.START));
+                    break;
             }
-        });
-        btnCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tvOut.setText(R.string.Нажата_Cancel);
-
-            }
-        });
+        } else {
+            Toast.makeText(this, "Wrong result", Toast.LENGTH_LONG).show();
+        }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mymenu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    // обновление меню
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-        // пункты меню с ID группы = 1 видны, если в CheckBox стоит галка
-        menu.setGroupVisible(1, checkBox.isChecked());
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO Auto-generated method stub
-        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
-        String sb = "Item Menu" +
-                "\r\n groupId: " + String.valueOf(item.getGroupId()) +
-                "\r\n itemId: " + String.valueOf(item.getItemId()) +
-                "\r\n order: " + String.valueOf(item.getOrder()) +
-                "\r\n title: " + item.getTitle();
-
-        // Выведем в TextView информацию о нажатом пункте меню
-        menu.setText(sb);
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
 }

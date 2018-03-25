@@ -10,5 +10,8 @@
     <string name="Нажата_OK">Нажата OK</string>
     <string name="checkbox">Расширенное меню</string>
     <string name="menu">Меню</string>
+    <string name="time_activity">Show time</string>
+    <string name="this_is_activity_two">This is Activity Two</string>
+    <string name="date_activity">Show date</string>
 
 </resources>
