@@ -1,6 +1,7 @@
 package software.sadovnikov.configurator;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +25,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnMap;
     Button btnCall;
 
+    EditText etText;
+    Button btnSave, btnLoad;
+
+    SharedPreferences sPref;
+
     final int REQUEST_CODE_COLOR = 1;
     final int REQUEST_CODE_ALIGNMENT = 2;
+
+    final String SAVED_TEXT = "Saved text";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +55,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnWeb.setOnClickListener(this);
         btnMap.setOnClickListener(this);
         btnCall.setOnClickListener(this);
+
+        etText = (EditText) findViewById(R.id.etText);
+
+        btnSave = (Button) findViewById(R.id.btnSave);
+        btnSave.setOnClickListener(this);
+
+        btnLoad = (Button) findViewById(R.id.btnLoad);
+        btnLoad.setOnClickListener(this);
+
+        loadText();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveText();
     }
 
     @Override
     public void onClick(View v) {
         Intent intent;
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnColor:
                 intent = new Intent(this, ColorActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_COLOR);
@@ -74,7 +99,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setData(Uri.parse("tel:+79651034808"));
                 startActivity(intent);
                 break;
+            case R.id.btnSave:
+                saveText();
+                break;
+            case R.id.btnLoad:
+                loadText();
+                break;
         }
+    }
+
+    void saveText() {
+        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(SAVED_TEXT, etText.getText().toString());
+        editor.commit();
+        Toast.makeText(this, "Text saved", Toast.LENGTH_SHORT).show();
+    }
+
+    void loadText() {
+        sPref = getPreferences(MODE_PRIVATE);
+        String savedText = sPref.getString(SAVED_TEXT,"");
+        etText.setText(savedText);
+        Toast.makeText(this, "Text loaded", Toast.LENGTH_SHORT).show();
     }
 
     @Override
